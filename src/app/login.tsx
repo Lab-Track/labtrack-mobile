@@ -9,6 +9,7 @@ import {
   Text,
   TextInput,
   View,
+  type TextInputInstance,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -40,7 +41,7 @@ const assets = {
 export default function Login() {
   const { scheme, colors } = useTheme();
   const { signIn } = useSession();
-  const passwordRef = useRef<TextInput>(null);
+  const passwordRef = useRef<TextInputInstance>(null);
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
