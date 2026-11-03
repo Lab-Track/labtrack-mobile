@@ -2,6 +2,7 @@ import { Image } from "expo-image";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { BottomNavBar } from "@/components/bottom-nav-bar";
 import { palette } from "@/theme/colors";
 import { fonts } from "@/theme/fonts";
 import { useTheme } from "@/theme/use-theme";
@@ -16,9 +17,6 @@ const assets = {
     pending: require("@/assets/images/menu/icon-pending-dark.svg"),
     chart: require("@/assets/images/menu/chart-dark.svg"),
     dotAvailable: require("@/assets/images/menu/dot-available-dark.svg"),
-    navEquipment: require("@/assets/images/menu/nav-equipment-dark.svg"),
-    navStudents: require("@/assets/images/menu/nav-students-dark.svg"),
-    navAlerts: require("@/assets/images/menu/nav-alerts-dark.svg"),
   },
   light: {
     decor: require("@/assets/images/menu/decor-light.svg"),
@@ -29,15 +27,11 @@ const assets = {
     pending: require("@/assets/images/menu/icon-pending-light.svg"),
     chart: require("@/assets/images/menu/chart-light.svg"),
     dotAvailable: require("@/assets/images/menu/dot-available-light.svg"),
-    navEquipment: require("@/assets/images/menu/nav-equipment-light.svg"),
-    navStudents: require("@/assets/images/menu/nav-students-light.svg"),
-    navAlerts: require("@/assets/images/menu/nav-alerts-light.svg"),
   },
 };
 
 // Independentes de tema no protótipo.
 const swapIcon = require("@/assets/images/menu/icon-swap.svg");
-const navHomeIcon = require("@/assets/images/menu/nav-home.svg");
 const dotBorrowed = require("@/assets/images/menu/dot-borrowed.svg");
 const dotMaintenance = require("@/assets/images/menu/dot-maintenance.svg");
 const dotInactive = require("@/assets/images/menu/dot-inactive.svg");
@@ -181,17 +175,7 @@ export default function MenuPrincipal() {
         </ScrollView>
       </SafeAreaView>
 
-      <SafeAreaView edges={["bottom"]} style={{ backgroundColor: colors.card }}>
-        <View style={[styles.navBar, { backgroundColor: colors.card }]}>
-          <View style={styles.navItem}>
-            <Image source={navHomeIcon} style={styles.navIcon} />
-            <Text style={styles.navLabelActive}>Home</Text>
-          </View>
-          <Image source={img.navEquipment} style={styles.navIconInactive} />
-          <Image source={img.navStudents} style={styles.navIconInactive} />
-          <Image source={img.navAlerts} style={styles.navIconInactive} />
-        </View>
-      </SafeAreaView>
+      <BottomNavBar active="home" />
     </View>
   );
 }
@@ -387,29 +371,5 @@ const styles = StyleSheet.create({
     fontFamily: fonts.semiBold,
     fontSize: 14,
     color: palette.onPrimary,
-  },
-  navBar: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-evenly",
-    paddingTop: 10,
-    minHeight: 60,
-  },
-  navItem: {
-    alignItems: "center",
-    gap: 10,
-  },
-  navIcon: {
-    width: 24,
-    height: 24,
-  },
-  navLabelActive: {
-    fontFamily: fonts.regular,
-    fontSize: 8,
-    color: palette.primary,
-  },
-  navIconInactive: {
-    width: 24,
-    height: 24,
   },
 });
