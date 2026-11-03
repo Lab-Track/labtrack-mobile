@@ -15,6 +15,8 @@ export const themes = {
     placeholder: "rgba(255,255,255,0.45)",
     muted: "rgba(255,255,255,0.45)",
     error: "#ff8a8a",
+    card: "#0e1130",
+    cardBorder: "rgba(255,255,255,0.09)",
   },
   light: {
     background: "#ededed",
@@ -26,6 +28,8 @@ export const themes = {
     placeholder: "rgba(15,23,42,0.5)",
     muted: "rgba(15,23,42,0.5)",
     error: "#c62828",
+    card: "#ffffff",
+    cardBorder: "transparent",
   },
 };
 
