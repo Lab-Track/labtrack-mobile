@@ -1,4 +1,5 @@
 import { Image } from "expo-image";
+import { router } from "expo-router";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -168,6 +169,7 @@ export default function MenuPrincipal() {
           <Pressable
             style={({ pressed }) => [styles.ctaButton, pressed && { opacity: 0.85 }]}
             accessibilityRole="button"
+            onPress={() => router.push("/buscar-equipamento")}
           >
             <Image source={swapIcon} style={styles.ctaIcon} />
             <Text style={styles.ctaLabel}>Emprestar / Devolver</Text>

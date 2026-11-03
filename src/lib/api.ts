@@ -86,3 +86,35 @@ export async function listEquipment(
   }
   return response.json();
 }
+
+export type Loan = {
+  loanId: number;
+  equipmentName: string;
+  quantity: number;
+  studentName: string;
+  studentRegistrationNumber: string;
+  professorName: string;
+  technicianName: string;
+  checkoutDate: string;
+  expectedReturnDate: string;
+  loanStatus: string;
+};
+
+export async function listActiveLoans(token: string): Promise<Loan[]> {
+  let response: Response;
+  try {
+    response = await fetch(`${API_URL}/api/loans`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  } catch {
+    throw new ApiError("Não foi possível conectar ao servidor. Verifique sua conexão.");
+  }
+
+  if (response.status === 401) {
+    throw new ApiError("Sessão expirada. Faça login novamente.", 401);
+  }
+  if (!response.ok) {
+    throw new ApiError("Erro ao carregar empréstimos. Tente novamente.", response.status);
+  }
+  return response.json();
+}
