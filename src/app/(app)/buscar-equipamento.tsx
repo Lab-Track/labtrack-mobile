@@ -266,8 +266,18 @@ function EquipmentRow({
   scheme: "dark" | "light";
   colors: { title: string; subtitle: string };
 }) {
+  // Emprestado/atrasado/esgotado levariam à tela 9 (devolução), que ainda não existe.
+  const onPress =
+    row.equipment.status === "DISPONIVEL"
+      ? () =>
+          router.push({
+            pathname: "/dados-emprestimo",
+            params: { equipmentId: String(row.equipment.id) },
+          })
+      : undefined;
+
   return (
-    <Pressable style={[cardStyle, styles.itemCard]} accessibilityRole="button">
+    <Pressable style={[cardStyle, styles.itemCard]} onPress={onPress} accessibilityRole="button">
       <Image source={img.item} style={styles.itemIcon} />
       <View style={styles.itemInfo}>
         <Text style={[styles.itemName, { color: colors.title }]} numberOfLines={1}>
