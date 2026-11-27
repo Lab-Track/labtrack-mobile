@@ -1,5 +1,6 @@
 import { Image } from "expo-image";
-import { useEffect, useState } from "react";
+import { router, useFocusEffect } from "expo-router";
+import { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -70,44 +71,56 @@ export default function Equipamentos() {
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<EquipmentStatus | "ALL">("ALL");
-  const [items, setItems] = useState<Equipment[]>([]);
-  const [total, setTotal] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [result, setResult] = useState<{
+    key: string;
+    items: Equipment[];
+    total: number;
+    error: string | null;
+  } | null>(null);
 
   useEffect(() => {
     const timeout = setTimeout(() => setDebouncedSearch(search.trim()), 400);
     return () => clearTimeout(timeout);
   }, [search]);
 
-  useEffect(() => {
-    if (!session) return;
-    let cancelled = false;
-    setLoading(true);
-    setError(null);
+  // Identifica a consulta atual; "carregando" = ainda não chegou resultado para ela.
+  const requestKey = `${statusFilter}|${debouncedSearch}`;
+  const loading = result?.key !== requestKey;
+  const items = result?.items ?? [];
+  const total = result?.total ?? 0;
+  const error = loading ? null : (result?.error ?? null);
 
-    listEquipment(session.token, {
-      status: statusFilter === "ALL" ? undefined : statusFilter,
-      search: debouncedSearch || undefined,
-      size: 100,
-    })
-      .then((page) => {
-        if (cancelled) return;
-        setItems(page.content);
-        setTotal(page.totalElements);
-      })
-      .catch((e) => {
-        if (cancelled) return;
-        setError(e instanceof ApiError ? e.message : "Erro ao carregar equipamentos.");
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
+  // Busca ao focar a tela e quando os filtros mudam — recarrega ao voltar pra essa
+  // tela (ex.: depois de cadastrar um equipamento) sem duplicar a busca inicial.
+  useFocusEffect(
+    useCallback(() => {
+      if (!session) return;
+      let cancelled = false;
 
-    return () => {
-      cancelled = true;
-    };
-  }, [session, statusFilter, debouncedSearch]);
+      listEquipment(session.token, {
+        status: statusFilter === "ALL" ? undefined : statusFilter,
+        search: debouncedSearch || undefined,
+        size: 100,
+      })
+        .then((page) => {
+          if (cancelled) return;
+          setResult({ key: requestKey, items: page.content, total: page.totalElements, error: null });
+        })
+        .catch((e) => {
+          if (cancelled) return;
+          setResult((prev) => ({
+            key: requestKey,
+            items: prev?.items ?? [],
+            total: prev?.total ?? 0,
+            error: e instanceof ApiError ? e.message : "Erro ao carregar equipamentos.",
+          }));
+        });
+
+      return () => {
+        cancelled = true;
+      };
+    }, [session, statusFilter, debouncedSearch, requestKey]),
+  );
 
   const cardStyle = [
     styles.card,
@@ -212,7 +225,12 @@ export default function Equipamentos() {
         )}
       </SafeAreaView>
 
-      <Pressable style={styles.fab} accessibilityRole="button" accessibilityLabel="Cadastrar equipamento">
+      <Pressable
+        style={styles.fab}
+        onPress={() => router.push("/cadastrar-equipamento")}
+        accessibilityRole="button"
+        accessibilityLabel="Cadastrar equipamento"
+      >
         <Image source={addIcon} style={styles.fabIcon} />
       </Pressable>
 

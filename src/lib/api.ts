@@ -319,3 +319,41 @@ export async function createLoan(token: string, request: LoanRequest): Promise<{
   }
   return response.json();
 }
+
+export type EquipmentRequest = {
+  name: string;
+  identificationPhoto: string;
+  status: EquipmentStatus;
+  laboratory: string;
+  quantity: number;
+};
+
+export async function createEquipment(token: string, request: EquipmentRequest): Promise<Equipment> {
+  let response: Response;
+  try {
+    response = await fetch(`${API_URL}/api/equipment`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        nome: request.name,
+        fotoUrl: request.identificationPhoto,
+        status: request.status,
+        laboratorio: request.laboratory,
+        qtdTotal: request.quantity,
+      }),
+    });
+  } catch {
+    throw new ApiError("Não foi possível conectar ao servidor. Verifique sua conexão.");
+  }
+
+  if (response.status === 401) {
+    throw new ApiError("Sessão expirada. Faça login novamente.", 401);
+  }
+  if (!response.ok) {
+    throw new ApiError(
+      await extractErrorMessage(response, "Erro ao cadastrar o equipamento. Tente novamente."),
+      response.status,
+    );
+  }
+  return response.json();
+}
