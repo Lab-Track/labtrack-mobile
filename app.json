@@ -32,6 +32,14 @@
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 76
         }
+      ],
+      "expo-secure-store",
+      "expo-image",
+      [
+        "expo-image-picker",
+        {
+          "cameraPermission": "O LabTrack usa a câmera para registrar o estado dos equipamentos na retirada e na devolução."
+        }
       ]
     ],
     "experiments": {
